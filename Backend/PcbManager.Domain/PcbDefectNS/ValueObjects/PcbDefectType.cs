@@ -1,4 +1,6 @@
-﻿using CSharpExtensions.Result;
+﻿
+using CSharpFunctionalExtensions;
+using PcbManager.Domain.Errors.Abstractions;
 
 namespace PcbManager.Domain.PcbDefectNS.ValueObjects;
 
@@ -15,8 +17,6 @@ public class PcbDefectType
     {
     }
 
-    public static Result<PcbDefectType> Create(PcbDefectTypeEnum value)
-    {
-        return Result<PcbDefectType>.Success(new PcbDefectType(value));
-    }
+    public static Result<PcbDefectType, BaseError> Create(PcbDefectTypeEnum value) =>
+        Result.Success<PcbDefectType, BaseError>(new PcbDefectType(value));
 }

@@ -17,8 +17,6 @@ namespace PcbManager.DAL.PcbDefect
 
             builder.HasKey(x => x.Id);
 
-            builder.HasOne(x => x.Report).WithMany(x => x.PcbDefects);
-
             builder.Property(x => x.Id)
                 .ValueGeneratedNever()
                 .HasConversion(

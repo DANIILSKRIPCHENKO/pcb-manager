@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PcbManager.Domain.Common;
 using PcbManager.Domain.UserNS.ValueObjects;
 
 namespace PcbManager.DAL.User
@@ -17,13 +18,13 @@ namespace PcbManager.DAL.User
 
             builder.HasKey(x => x.Id);
 
-            builder.HasMany(x => x.Images).WithOne(x => x.User);
+            builder.HasMany<Domain.ImageNS.Image>().WithOne().HasForeignKey(x => x.UserId);
 
             builder.Property(x => x.Id)
                 .ValueGeneratedNever()
                 .HasConversion(
                 id => id.Value,
-                value => UserId.Create(value).Value);
+                value => UserId.Create(value));
 
             builder.Property(x => x.Name)
                 .HasConversion(
@@ -44,6 +45,16 @@ namespace PcbManager.DAL.User
                 .HasConversion(
                 password => password.Value,
                 value => UserPassword.Create(value).Value);
+
+            builder.Property(x => x.CreatedAt)
+                .HasConversion(
+                    createdAt => createdAt.Value,
+                    value => CreatedAt.Create(value).Value);
+
+            builder.Property(x => x.UpdatedAt)
+                .HasConversion(
+                    updatedAt => updatedAt.Value,
+                    value => UpdatedAt.Create(value).Value);
         }
     }
 }

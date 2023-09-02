@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PcbManager.Domain.PcbDefectNS.ValueObjects;
+﻿using CSharpFunctionalExtensions;
+using Microsoft.AspNetCore.Mvc;
+using PcbManager.App.Report;
+using PcbManager.Domain.ReportNS.ValueObjects;
 using PcbManager.WebApi.Customization;
 using PcbManager.WebApi.Dtos;
+using PcbManager.WebApi.ErrorHandler;
 
 namespace PcbManager.WebApi.Controllers;
 
@@ -9,33 +12,30 @@ namespace PcbManager.WebApi.Controllers;
 [StandardRoute]
 public class ReportsController : ControllerBase
 {
-    public ReportsController()
-    {
+    private readonly IReportAppService _reportAppService;
 
+    public ReportsController(IReportAppService reportAppService)
+    {
+        _reportAppService = reportAppService;
     }
 
     [HttpGet]
-    public ActionResult<List<ReportDto>> GetAllByUserId(Guid userId)
-    {
-        return Ok(new List<ReportDto>()
-        {
-            new ReportDto()
-            {
-                PcbDefectTypes = new List<PcbDefectTypeEnum>() {PcbDefectTypeEnum.Short},
-                Id = Guid.NewGuid(),
-                ImageId = Guid.NewGuid()
-            }
-        });
-    }
+    public async Task<ActionResult<List<ReportDto>>> GetAll() =>
+        await _reportAppService.GetAllAsync().Match(reports =>
+            Ok(reports.Select(ReportDto.From)), ErrorMapper.Map);
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<ReportDto>> GetById(Guid id) =>
+        await _reportAppService.GetByIdAsync(ReportId.Create(id).Value)
+            .Match(report => Ok(ReportDto.From(report)), ErrorMapper.Map);
 
     [HttpPost]
-    public ActionResult<ReportDto> Create(Guid imageId)
-    {
-        return Ok(new ReportDto()
-        {
-            Id = Guid.NewGuid(),
-            ImageId = imageId,
-            PcbDefectTypes = new List<PcbDefectTypeEnum>() {PcbDefectTypeEnum.Short},
-        });
-    }
+    public async Task<ActionResult<UserDto>> Create([FromBody] CreateReportRequest createReportRequest) =>
+        await _reportAppService.CreateAsync(createReportRequest)
+            .Match(report => Ok(ReportDto.From(report)), ErrorMapper.Map);
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult<UserDto>> Delete(Guid id) =>
+        await _reportAppService.DeleteAsync(ReportId.Create(id).Value)
+            .Match(report => Ok(ReportDto.From(report)), ErrorMapper.Map);
 }

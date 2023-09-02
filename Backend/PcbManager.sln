@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PcbManager.Domain", "PcbMan
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PcbManager.DAL", "PcbManager.DAL\PcbManager.DAL.csproj", "{8B8EBD4A-EFDB-441B-A238-77F7441F65F2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpExtensions", "CSharpExtensions\CSharpExtensions.csproj", "{75C08586-08A1-43D9-861C-68C200218993}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PcbManager.FileSystem", "PcbManager.FileSystem\PcbManager.FileSystem.csproj", "{E5EEEC0C-DBC3-4F92-BDD6-C5829CB05C73}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PcbManager.Tests", "PcbManager.Tests\PcbManager.Tests.csproj", "{2D07289A-D4B6-405E-A3BA-A9C039226025}"
@@ -45,10 +43,6 @@ Global
 		{8B8EBD4A-EFDB-441B-A238-77F7441F65F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B8EBD4A-EFDB-441B-A238-77F7441F65F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B8EBD4A-EFDB-441B-A238-77F7441F65F2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{75C08586-08A1-43D9-861C-68C200218993}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{75C08586-08A1-43D9-861C-68C200218993}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{75C08586-08A1-43D9-861C-68C200218993}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{75C08586-08A1-43D9-861C-68C200218993}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E5EEEC0C-DBC3-4F92-BDD6-C5829CB05C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E5EEEC0C-DBC3-4F92-BDD6-C5829CB05C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5EEEC0C-DBC3-4F92-BDD6-C5829CB05C73}.Release|Any CPU.ActiveCfg = Release|Any CPU

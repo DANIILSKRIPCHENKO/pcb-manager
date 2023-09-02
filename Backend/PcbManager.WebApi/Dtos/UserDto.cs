@@ -1,12 +1,24 @@
-﻿namespace PcbManager.WebApi.Dtos;
+﻿using PcbManager.Domain.UserNS;
+
+namespace PcbManager.WebApi.Dtos;
 
 public class UserDto
 {
-    public Guid Id { get; set; }
+    private UserDto(User user)
+    {
+        Id = user.Id.Value;
+        Name = user.Name.Value;
+        Surname = user.Surname.Value;
+        Email = user.Email.Value;
+    }
 
-    public string Name { get; set; }
+    public Guid Id { get; }
 
-    public string Surname { get; set; }
+    public string Name { get; }
 
-    public string Email { get; set; }
+    public string Surname { get; }
+
+    public string Email { get; }
+
+    public static UserDto From(User user) => new(user);
 }

@@ -1,21 +1,22 @@
-﻿using CSharpExtensions.Result;
-using PcbManager.Domain.ImageNS;
+﻿using CSharpFunctionalExtensions;
+using PcbManager.Domain.Abstractions;
+using PcbManager.Domain.Common;
+using PcbManager.Domain.Errors.Abstractions;
 using PcbManager.Domain.ImageNS.ValueObjects;
 using PcbManager.Domain.PcbDefectNS;
 using PcbManager.Domain.ReportNS.ValueObjects;
-using PcbManager.Domain.UserNS;
 
 namespace PcbManager.Domain.ReportNS;
 
-public class Report
+public class Report : IIdEntity<ReportId>, ICreatedAtEntity
 {
     private readonly List<PcbDefect> _pcbDefect = new();
 
-    private Report(Image image, List<PcbDefect> pcbDefects)
+    private Report(ImageId imageId)
     {
         Id = ReportId.CreateUnique().Value;
-        Image = image;
-        _pcbDefect = pcbDefects;
+        ImageId = imageId;
+        CreatedAt = CreatedAt.FromNow().Value;
     }
 
     private Report(){}
@@ -23,12 +24,9 @@ public class Report
     public ReportId Id { get; }
 
     public ImageId ImageId { get; }
-    public Image Image { get; }
 
-    public IReadOnlyList<PcbDefect> PcbDefects => _pcbDefect.AsReadOnly();
+    public CreatedAt CreatedAt { get; }
 
-    public static Result<Report> Create(Image image, List<PcbDefect> pcbDefects)
-    {
-        return Result<Report>.Success(new Report(image, pcbDefects));
-    }
+    public static Result<Report, BaseError> Create(ImageId imageId) =>
+        Result.Success<Report, BaseError>(new Report(imageId));
 }

@@ -1,23 +1,28 @@
-﻿using CSharpExtensions.Result;
+﻿using CSharpFunctionalExtensions;
+using PcbManager.Domain.Abstractions;
+using PcbManager.Domain.Common;
+using PcbManager.Domain.Errors.Abstractions;
 using PcbManager.Domain.ImageNS.ValueObjects;
-using PcbManager.Domain.ReportNS;
-using PcbManager.Domain.UserNS;
+using PcbManager.Domain.UserNS.ValueObjects;
 
 namespace PcbManager.Domain.ImageNS
 {
-    public class Image
+    public class Image : IIdEntity<ImageId>, ICreatedAtEntity
     {
-        private Image(ImageName imageName, ImagePath imagePath, User user)
+        private Image(ImageName imageName, ImagePath imagePath, UserId userId)
         {
             Id = ImageId.CreateUnique().Value;
             ImageName = imageName;
             ImagePath = imagePath;
-            User= user;
+            UserId = userId;
+            CreatedAt = CreatedAt.FromNow().Value;
         }
 
+#pragma warning disable CS8618
         private Image()
         {
         }
+#pragma warning restore CS8618
 
         public ImageId Id { get; }
 
@@ -25,13 +30,11 @@ namespace PcbManager.Domain.ImageNS
 
         public ImagePath ImagePath { get; }
 
-        public User User { get; }
+        public UserId UserId { get; }
 
-        public Report Report { get; }
+        public CreatedAt CreatedAt { get; }
 
-        public static Result<Image> Create(ImageName imageName, ImagePath imagePath, User user)
-        {
-            return Result<Image>.Success(new Image(imageName, imagePath, user));
-        }
+        public static IResult<Image, BaseError> Create(ImageName imageName, ImagePath imagePath, UserId userId) =>
+            Result.Success<Image, BaseError>(new Image(imageName, imagePath, userId));
     }
 }

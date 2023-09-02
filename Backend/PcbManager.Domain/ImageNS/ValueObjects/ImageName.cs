@@ -1,4 +1,6 @@
-﻿using CSharpExtensions.Result;
+﻿using CSharpFunctionalExtensions;
+using PcbManager.Domain.Errors;
+using PcbManager.Domain.Errors.Abstractions;
 
 namespace PcbManager.Domain.ImageNS.ValueObjects
 {
@@ -11,12 +13,9 @@ namespace PcbManager.Domain.ImageNS.ValueObjects
             Value = value;
         }
 
-        public static Result<ImageName> Create(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return Result<ImageName>.Failure("Image name is invalid");
-
-            return Result<ImageName>.Success(new ImageName(value));
-        }
+        public static IResult<ImageName, ValidationError> Create(string value) =>
+            string.IsNullOrWhiteSpace(value)
+                ? Result.Failure<ImageName, ValidationError>(new ValidationError())
+                : Result.Success<ImageName, ValidationError>(new ImageName(value));
     }
 }

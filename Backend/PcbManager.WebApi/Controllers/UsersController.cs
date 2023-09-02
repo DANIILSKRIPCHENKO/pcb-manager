@@ -1,69 +1,45 @@
-using AutoMapper;
+using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Mvc;
-using PcbManager.App;
-using PcbManager.Domain.UserNS;
-using PcbManager.Domain.UserNS.ValueObjects;
+using PcbManager.App.User;
 using PcbManager.WebApi.Customization;
 using PcbManager.WebApi.Dtos;
+using PcbManager.WebApi.ErrorHandler;
 
-namespace PcbManager.WebApi.Controllers
+namespace PcbManager.WebApi.Controllers;
+
+[ApiController]
+[StandardRoute]
+public class UsersController : ControllerBase
 {
-    [ApiController]
-    [StandardRoute]
-    public class UsersController : ControllerBase
+    private readonly IUserAppService _userAppService;
+
+    public UsersController(IUserAppService userAppService)
     {
-        private readonly IUserAppService _userAppService;
-        private readonly IMapper _mapper;
-
-        public UsersController(IUserAppService userAppService, IMapper mapper)
-        {
-            _userAppService = userAppService;
-            _mapper = mapper;
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserRequest createUserRequest)
-        {
-            var userResult = await _userAppService.CreateAsync(createUserRequest);
-
-            if(userResult.IsFailure)
-                return BadRequest();
-
-            return Ok(_mapper.Map<UserDto>(userResult.Value));
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<List<UserDto>>> GetAll()
-        {
-            var maybeUsers = await _userAppService.GetAllAsync();
-
-            if (maybeUsers.HasNoValue)
-                return NotFound();
-
-            return Ok(_mapper.Map<List<UserDto>>(maybeUsers.Value));
-        }
-
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<UserDto>> GetById(Guid id)
-        {
-            var maybeUser = await _userAppService.GetByIdAsync(UserId.Create(id).Value);
-
-            if (maybeUser.HasNoValue)
-                return NotFound();
-
-            return Ok(_mapper.Map<UserDto>(maybeUser.Value));
-        }
+        _userAppService = userAppService;
     }
 
-    internal class UsersControllerProfile : Profile
-    {
-        public UsersControllerProfile()
-        {
-            CreateMap<User, UserDto>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Value))
-                .ForMember(dest => dest.Surname, opt => opt.MapFrom(src => src.Surname.Value))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email.Value));
-        }
-    }
+    [HttpGet]
+    public async Task<ActionResult<List<UserDto>>> GetAll() =>
+        await _userAppService.GetAllAsync()
+            .Match(users => Ok(users.Select(UserDto.From)), ErrorMapper.Map);
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<UserDto>> GetById(Guid id) =>
+        await _userAppService.GetByIdAsync(id)
+            .Match(user => Ok(UserDto.From(user)), ErrorMapper.Map);
+
+    [HttpPost]
+    public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserRequest createUserRequest) =>
+        await _userAppService.CreateAsync(createUserRequest)
+            .Match(user => Ok(UserDto.From(user)), ErrorMapper.Map);
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult<UserDto>> Delete(Guid id) =>
+        await _userAppService.DeleteAsync(id)
+            .Match(user => Ok(UserDto.From(user)), ErrorMapper.Map);
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<UserDto>> Update(Guid id, UpdateUserRequest updateUserRequest) =>
+        await _userAppService.UpdateAsync(id, updateUserRequest)
+            .Match(user => Ok(UserDto.From(user)), ErrorMapper.Map);
 }

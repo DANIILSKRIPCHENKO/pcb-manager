@@ -17,6 +17,10 @@ namespace PcbManager.DAL.Image
 
             builder.HasKey(x => x.Id);
 
+            builder.HasOne<Domain.ReportNS.Report>()
+                .WithOne()
+                .HasForeignKey<Domain.ReportNS.Report>(x => x.ImageId);
+
             builder.Property(x => x.Id)
                 .ValueGeneratedNever()
                 .HasConversion(
@@ -30,7 +34,7 @@ namespace PcbManager.DAL.Image
 
             builder.Property(x => x.ImagePath)
                 .HasConversion(
-                iamgePath => iamgePath.Value,
+                imagePath => imagePath.Value,
                 value => ImagePath.Create(value).Value);
         }
     }

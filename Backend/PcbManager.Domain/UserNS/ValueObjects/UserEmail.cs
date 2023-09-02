@@ -1,5 +1,7 @@
-﻿using CSharpExtensions.Result;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using CSharpFunctionalExtensions;
+using PcbManager.Domain.Errors;
+using PcbManager.Domain.Errors.Abstractions;
 
 namespace PcbManager.Domain.UserNS.ValueObjects
 {
@@ -12,17 +14,17 @@ namespace PcbManager.Domain.UserNS.ValueObjects
             Value = value;
         }
 
-        public static Result<UserEmail> Create(string value)
+        public static Result<UserEmail, ValidationError> Create(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
-                return Result<UserEmail>.Failure("User email must not be empty or white space");
+                return Result.Failure<UserEmail, ValidationError>(new ValidationError());
 
             var emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
             var match = emailRegex.Match(value);
             if (!match.Success)
-                return Result<UserEmail>.Failure("User email is invalid email");
+                return Result.Failure<UserEmail, ValidationError>(new ValidationError());
 
-            return Result<UserEmail>.Success(new UserEmail(value));
+            return Result.Success<UserEmail, ValidationError>(new UserEmail(value));
         }
     }
 }

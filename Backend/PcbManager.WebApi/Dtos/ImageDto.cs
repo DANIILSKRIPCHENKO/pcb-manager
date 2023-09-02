@@ -1,11 +1,21 @@
-﻿namespace PcbManager.WebApi.Dtos;
+﻿using PcbManager.Domain.ImageNS;
+
+namespace PcbManager.WebApi.Dtos;
 
 public class ImageDto
 {
-    public Guid Id { get; set; }
+    private ImageDto(Image image)
+    {
+        Id = image.Id.Value;
+        ImageName = image.ImageName.Value;
+        ImagePath = image.ImagePath.Value;
+    }
 
-    public string ImageName { get; set; }
+    public Guid Id { get; }
 
-    public string ImagePath { get; set; }
+    public string ImageName { get; }
 
+    public string ImagePath { get; }
+
+    public static ImageDto From(Image image) => new(image);
 }

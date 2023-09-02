@@ -15,11 +15,7 @@ public class ReportConfigurations : IEntityTypeConfiguration<Domain.ReportNS.Rep
     {
         builder.ToTable("Reports");
 
-        builder.HasOne(x => x.Image)
-            .WithOne(x => x.Report)
-            .HasForeignKey<Domain.ReportNS.Report>(x => x.ImageId);
-
-        builder.HasMany(x => x.PcbDefects).WithOne(x => x.Report);
+        builder.HasMany<Domain.PcbDefectNS.PcbDefect>().WithOne().HasForeignKey(x => x.ReportId);
 
         builder.HasKey(x => x.Id);
 

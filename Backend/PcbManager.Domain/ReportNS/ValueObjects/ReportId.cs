@@ -1,4 +1,6 @@
-﻿using CSharpExtensions.Result;
+﻿
+using CSharpFunctionalExtensions;
+using PcbManager.Domain.Errors.Abstractions;
 
 namespace PcbManager.Domain.ReportNS.ValueObjects;
 
@@ -11,13 +13,13 @@ public class ReportId
         Value = value;
     }
 
-    public static Result<ReportId> Create(Guid value)
+    public static Result<ReportId, BaseError> Create(Guid value)
     {
-        return Result<ReportId>.Success(new ReportId(value));
+        return Result.Success<ReportId, BaseError>(new ReportId(value));
     }
 
-    public static Result<ReportId> CreateUnique()
+    public static Result<ReportId, BaseError> CreateUnique()
     {
-        return Result<ReportId>.Success(new ReportId(Guid.NewGuid()));
+        return Result.Success<ReportId, BaseError>(new ReportId(Guid.NewGuid()));
     }
 }

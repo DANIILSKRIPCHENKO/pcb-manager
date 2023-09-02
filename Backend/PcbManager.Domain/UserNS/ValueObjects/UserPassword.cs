@@ -1,4 +1,6 @@
-﻿using CSharpExtensions.Result;
+﻿using CSharpFunctionalExtensions;
+using PcbManager.Domain.Errors;
+using PcbManager.Domain.Errors.Abstractions;
 
 namespace PcbManager.Domain.UserNS.ValueObjects
 {
@@ -11,13 +13,13 @@ namespace PcbManager.Domain.UserNS.ValueObjects
             Value = value;
         }
 
-        public static Result<UserPassword> Create(string value)
+        public static Result<UserPassword, ValidationError> Create(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
-                return Result<UserPassword>.Failure("User password is invalid");
+                return Result.Failure<UserPassword, ValidationError>(new ValidationError());
 
             // add validation here
-            return Result<UserPassword>.Success(new UserPassword(value));
+            return Result.Success<UserPassword, ValidationError>(new UserPassword(value));
         }
     }
 }

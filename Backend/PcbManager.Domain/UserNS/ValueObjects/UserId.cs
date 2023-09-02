@@ -1,7 +1,4 @@
-﻿using CSharpExtensions.Result;
-using PcbManager.Domain.ImageNS.ValueObjects;
-
-namespace PcbManager.Domain.UserNS.ValueObjects
+﻿namespace PcbManager.Domain.UserNS.ValueObjects
 {
     public class UserId
     {
@@ -12,14 +9,8 @@ namespace PcbManager.Domain.UserNS.ValueObjects
             Value = value;
         }
 
-        public static Result<UserId> Create(Guid value)
-        {
-            return Result<UserId>.Success(new UserId(value));
-        }
+        public static UserId Create(Guid value) => new(value);
 
-        public static Result<UserId> CreateUnique()
-        {
-            return Result<UserId>.Success(new UserId(Guid.NewGuid()));
-        }
+        public static UserId CreateUnique() => new(Guid.NewGuid());
     }
 }

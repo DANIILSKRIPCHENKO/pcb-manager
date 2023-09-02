@@ -1,12 +1,18 @@
-﻿using PcbManager.Domain.PcbDefectNS.ValueObjects;
+﻿using PcbManager.Domain.ReportNS;
 
 namespace PcbManager.WebApi.Dtos;
 
 public class ReportDto
 {
-    public Guid Id { get; set; }
+    private ReportDto(Report report)
+    {
+        Id = report.Id.Value;
+        ImageId = report.Id.Value;
+    }
 
-    public Guid ImageId { get; set; }
+    public Guid Id { get; }
 
-    public List<PcbDefectTypeEnum> PcbDefectTypes { get; set; }
+    public Guid ImageId { get; }
+
+    public static ReportDto From(Report report) => new(report);
 }

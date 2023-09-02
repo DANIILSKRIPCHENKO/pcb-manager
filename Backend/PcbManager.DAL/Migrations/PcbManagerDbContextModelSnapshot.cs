@@ -84,6 +84,9 @@ namespace PcbManager.DAL.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
@@ -100,6 +103,9 @@ namespace PcbManager.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users", (string)null);
@@ -107,51 +113,29 @@ namespace PcbManager.DAL.Migrations
 
             modelBuilder.Entity("PcbManager.Domain.ImageNS.Image", b =>
                 {
-                    b.HasOne("PcbManager.Domain.UserNS.User", "User")
-                        .WithMany("Images")
+                    b.HasOne("PcbManager.Domain.UserNS.User", null)
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PcbManager.Domain.PcbDefectNS.PcbDefect", b =>
                 {
-                    b.HasOne("PcbManager.Domain.ReportNS.Report", "Report")
-                        .WithMany("PcbDefects")
+                    b.HasOne("PcbManager.Domain.ReportNS.Report", null)
+                        .WithMany()
                         .HasForeignKey("ReportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Report");
                 });
 
             modelBuilder.Entity("PcbManager.Domain.ReportNS.Report", b =>
                 {
-                    b.HasOne("PcbManager.Domain.ImageNS.Image", "Image")
-                        .WithOne("Report")
+                    b.HasOne("PcbManager.Domain.ImageNS.Image", null)
+                        .WithOne()
                         .HasForeignKey("PcbManager.Domain.ReportNS.Report", "ImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Image");
-                });
-
-            modelBuilder.Entity("PcbManager.Domain.ImageNS.Image", b =>
-                {
-                    b.Navigation("Report")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("PcbManager.Domain.ReportNS.Report", b =>
-                {
-                    b.Navigation("PcbDefects");
-                });
-
-            modelBuilder.Entity("PcbManager.Domain.UserNS.User", b =>
-                {
-                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

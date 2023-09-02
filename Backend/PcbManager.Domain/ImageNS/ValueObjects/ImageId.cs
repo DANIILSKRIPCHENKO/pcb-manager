@@ -1,4 +1,5 @@
-﻿using CSharpExtensions.Result;
+﻿using CSharpFunctionalExtensions;
+using PcbManager.Domain.Errors.Abstractions;
 
 namespace PcbManager.Domain.ImageNS.ValueObjects
 {
@@ -11,14 +12,10 @@ namespace PcbManager.Domain.ImageNS.ValueObjects
             Value = value;
         }
 
-        public static Result<ImageId> Create(Guid value)
-        {
-            return Result<ImageId>.Success(new ImageId(value));
-        }
+        public static Result<ImageId, BaseError> Create(Guid value) =>
+            Result.Success<ImageId, BaseError>(new ImageId(value));
 
-        public static Result<ImageId> CreateUnique()
-        {
-            return Result<ImageId>.Success(new ImageId(Guid.NewGuid()));
-        }
+        public static Result<ImageId, BaseError> CreateUnique() =>
+            Result.Success<ImageId, BaseError>(new ImageId(Guid.NewGuid()));
     }
 }
