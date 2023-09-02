@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PcbManager.Main.App.User;
 using PcbManager.Main.WebApi.Customization;
@@ -19,6 +20,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(AuthenticationSchemes = "Bearer,ApiKey")]
     public async Task<ActionResult<List<UserDto>>> GetAll() =>
         await _userAppService.GetAllAsync()
             .Match(users => Ok(users.Select(UserDto.From)), ErrorMapper.Map);
