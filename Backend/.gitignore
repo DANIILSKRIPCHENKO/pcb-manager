@@ -477,3 +477,6 @@ $RECYCLE.BIN/
 
 # Rider
 .idea/*
+
+# IdentityServer keys
+keys/
