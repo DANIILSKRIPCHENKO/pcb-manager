@@ -27,6 +27,8 @@ public class PcbDefect : IIdEntity<PcbDefectId>, ICreatedAtEntity
 
     public CreatedAt CreatedAt { get; }
 
-    public static Result<PcbDefect, BaseError> Create(PcbDefectType pcbDefectType, ReportId reportId) =>
-        Result.Success<PcbDefect, BaseError>(new PcbDefect(pcbDefectType, reportId));
+    public static Result<PcbDefect, BaseError> Create(
+        PcbDefectType pcbDefectType,
+        ReportId reportId
+    ) => Result.Success<PcbDefect, BaseError>(new PcbDefect(pcbDefectType, reportId));
 }

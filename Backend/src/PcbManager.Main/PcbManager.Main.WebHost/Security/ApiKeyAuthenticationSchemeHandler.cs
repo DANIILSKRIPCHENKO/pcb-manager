@@ -5,11 +5,16 @@ using System.Text.Encodings.Web;
 
 namespace PcbManager.Main.WebHost.Security
 {
-    public class ApiKeyAuthenticationSchemeHandler : AuthenticationHandler<ApiKeyAuthenticationSchemeOptions>
+    public class ApiKeyAuthenticationSchemeHandler
+        : AuthenticationHandler<ApiKeyAuthenticationSchemeOptions>
     {
-        public ApiKeyAuthenticationSchemeHandler(IOptionsMonitor<ApiKeyAuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
-        {
-        }
+        public ApiKeyAuthenticationSchemeHandler(
+            IOptionsMonitor<ApiKeyAuthenticationSchemeOptions> options,
+            ILoggerFactory logger,
+            UrlEncoder encoder,
+            ISystemClock clock
+        )
+            : base(options, logger, encoder, clock) { }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {

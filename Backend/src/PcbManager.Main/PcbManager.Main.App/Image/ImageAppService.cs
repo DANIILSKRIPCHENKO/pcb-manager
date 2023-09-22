@@ -10,15 +10,15 @@ namespace PcbManager.Main.App.Image
         private readonly IImageRepository _imageRepository;
         private readonly IImageFileSystem _imageFileSystem;
 
-        public ImageAppService(
-            IImageRepository imageRepository,
-            IImageFileSystem imageFileSystem)
+        public ImageAppService(IImageRepository imageRepository, IImageFileSystem imageFileSystem)
         {
             _imageRepository = imageRepository;
             _imageFileSystem = imageFileSystem;
         }
 
-        public async Task<Result<Domain.ImageNS.Image, BaseError>> UploadAsync(UploadImageRequest uploadImageRequest)
+        public async Task<Result<Domain.ImageNS.Image, BaseError>> UploadAsync(
+            UploadImageRequest uploadImageRequest
+        )
         {
             var imageFile = uploadImageRequest.ImageFile;
 
@@ -32,7 +32,11 @@ namespace PcbManager.Main.App.Image
 
             var userId = UserId.Create(uploadImageRequest.UserId);
 
-            var image = Domain.ImageNS.Image.Create(imageNameResult.Value, imagePathResult.Value, userId);
+            var image = Domain.ImageNS.Image.Create(
+                imageNameResult.Value,
+                imagePathResult.Value,
+                userId
+            );
             if (image.IsFailure)
                 return image.Error;
 
@@ -53,7 +57,6 @@ namespace PcbManager.Main.App.Image
             await _imageRepository.GetAllAsync();
 
         public async Task<Result<Domain.ImageNS.Image, BaseError>> DeleteAsync(ImageId imageId) =>
-            await _imageRepository.GetByIdAsync(imageId)
-                .Bind(x => _imageRepository.DeleteAsync(x));
+            await _imageRepository.GetByIdAsync(imageId).Bind(x => _imageRepository.DeleteAsync(x));
     }
 }

@@ -16,7 +16,9 @@ namespace PcbManager.Main.App.User
         public async Task<Result<List<Domain.UserNS.User>, BaseError>> GetAllAsync() =>
             await _userRepository.GetAllAsync();
 
-        public async Task<Result<Domain.UserNS.User, BaseError>> CreateAsync(CreateUserRequest createUserRequest)
+        public async Task<Result<Domain.UserNS.User, BaseError>> CreateAsync(
+            CreateUserRequest createUserRequest
+        )
         {
             var userNameResult = UserName.Create(createUserRequest.Name);
             if (userNameResult.IsFailure)
@@ -43,7 +45,8 @@ namespace PcbManager.Main.App.User
                 userSurnameResult.Value,
                 userEmailResult.Value,
                 userPasswordResult.Value,
-                usersResult.Value);
+                usersResult.Value
+            );
 
             if (userResult.IsFailure)
                 return userResult.Error;
@@ -55,10 +58,14 @@ namespace PcbManager.Main.App.User
             await _userRepository.GetByIdAsync(UserId.Create(id));
 
         public async Task<Result<Domain.UserNS.User, BaseError>> DeleteAsync(Guid id) =>
-            await _userRepository.GetByIdAsync(UserId.Create(id)).Bind(user => _userRepository.DeleteAsync(user));
+            await _userRepository
+                .GetByIdAsync(UserId.Create(id))
+                .Bind(user => _userRepository.DeleteAsync(user));
 
-        public async Task<Result<Domain.UserNS.User, BaseError>> UpdateAsync(Guid id,
-            UpdateUserRequest updateUserRequest)
+        public async Task<Result<Domain.UserNS.User, BaseError>> UpdateAsync(
+            Guid id,
+            UpdateUserRequest updateUserRequest
+        )
         {
             var userNameResult = UserName.Create(updateUserRequest.Name);
             if (userNameResult.IsFailure)
@@ -80,9 +87,18 @@ namespace PcbManager.Main.App.User
             if (usersResult.IsFailure)
                 return usersResult.Error;
 
-            return await _userRepository.GetByIdAsync(UserId.Create(id))
-                .Bind(user => user.Update(userNameResult.Value, userSurnameResult.Value, userEmailResult.Value,
-                    userPasswordResult.Value, usersResult.Value))
+            return await _userRepository
+                .GetByIdAsync(UserId.Create(id))
+                .Bind(
+                    user =>
+                        user.Update(
+                            userNameResult.Value,
+                            userSurnameResult.Value,
+                            userEmailResult.Value,
+                            userPasswordResult.Value,
+                            usersResult.Value
+                        )
+                )
                 .Bind(user => _userRepository.UpdateAsync(user));
         }
     }

@@ -10,7 +10,9 @@ public interface IPcbDefectAppService
 
     public Task<Result<Domain.PcbDefectNS.PcbDefect, BaseError>> GetByIdAsync(PcbDefectId id);
 
-    public Task<Result<Domain.PcbDefectNS.PcbDefect, BaseError>> CreateAsync(CreatePcbDefectRequest createPcbDefectRequest);
+    public Task<Result<Domain.PcbDefectNS.PcbDefect, BaseError>> CreateAsync(
+        CreatePcbDefectRequest createPcbDefectRequest
+    );
 
     public Task<Result<Domain.PcbDefectNS.PcbDefect, BaseError>> DeleteAsync(PcbDefectId id);
 }

@@ -11,22 +11,25 @@ namespace PcbManager.Main.DAL.PcbDefect
             ConfigurePcbDefectsTable(builder);
         }
 
-        private void ConfigurePcbDefectsTable(EntityTypeBuilder<Domain.PcbDefectNS.PcbDefect> builder)
+        private void ConfigurePcbDefectsTable(
+            EntityTypeBuilder<Domain.PcbDefectNS.PcbDefect> builder
+        )
         {
             builder.ToTable("PcbDefects");
 
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Id)
+            builder
+                .Property(x => x.Id)
                 .ValueGeneratedNever()
-                .HasConversion(
-                id => id.Value,
-                value => PcbDefectId.Create(value).Value);
+                .HasConversion(id => id.Value, value => PcbDefectId.Create(value).Value);
 
-            builder.Property(x => x.PcbDefectType)
+            builder
+                .Property(x => x.PcbDefectType)
                 .HasConversion(
-                pcbDefectType => (int)pcbDefectType.Value,
-                value => PcbDefectType.Create((PcbDefectTypeEnum)value).Value);
+                    pcbDefectType => (int)pcbDefectType.Value,
+                    value => PcbDefectType.Create((PcbDefectTypeEnum)value).Value
+                );
         }
     }
 }

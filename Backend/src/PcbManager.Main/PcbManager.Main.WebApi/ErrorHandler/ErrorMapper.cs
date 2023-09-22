@@ -12,7 +12,8 @@ public static class ErrorMapper
         return error switch
         {
             ValidationError validationError => new BadRequestObjectResult(validationError),
-            EntityNotFoundError entityNotFoundError => new NotFoundObjectResult(entityNotFoundError),
+            EntityNotFoundError entityNotFoundError
+                => new NotFoundObjectResult(entityNotFoundError),
             ConflictError conflictError => new ConflictObjectResult(conflictError),
             _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
         };

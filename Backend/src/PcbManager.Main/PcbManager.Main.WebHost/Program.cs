@@ -9,9 +9,11 @@ using PcbManager.Main.DAL.Report;
 using PcbManager.Main.DAL.User;
 using PcbManager.Main.FileSystem;
 using Microsoft.IdentityModel.Tokens;
-using static CSharpFunctionalExtensions.Result;
 using PcbManager.Main.WebHost.Security;
 using Microsoft.OpenApi.Models;
+using PcbManager.Main.WebHost.OpenApi;
+using PcbManager.Main.WebApi.Security;
+using static System.Net.WebRequestMethods;
 
 namespace PcbManager.Main.WebHost
 {
@@ -23,8 +25,15 @@ namespace PcbManager.Main.WebHost
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             // Add services to the container.
-            builder.Services.AddControllers().AddNewtonsoftJson(opt =>
-            opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            builder.Services
+                .AddControllers()
+                .AddNewtonsoftJson(
+                    opt =>
+                        opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft
+                            .Json
+                            .ReferenceLoopHandling
+                            .Ignore
+                );
 
             builder.Services.Configure<RouteOptions>(options =>
             {
@@ -35,53 +44,60 @@ namespace PcbManager.Main.WebHost
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "PcbManager.Main", Version = "v1" });
-                options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
-                {
-                    Description = "ApiKey must appear in header",
-                    Type = SecuritySchemeType.ApiKey,
-                    Name = "X-API-KEY",
-                    In = ParameterLocation.Header,
-                    Scheme = "ApiKey"
-                });
-                var key = new OpenApiSecurityScheme()
-                {
-                    Reference = new OpenApiReference
+                options.SwaggerDoc(
+                    "v1",
+                    new OpenApiInfo { Title = "PcbManager.Main", Version = "v1" }
+                );
+                options.AddSecurityDefinition(
+                    "ApiKey",
+                    new OpenApiSecurityScheme
                     {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "ApiKey"
-                    },
-                    In = ParameterLocation.Header
-                };
-                var requirement = new OpenApiSecurityRequirement
-                {
-                    { key, new List<string>() }
-                };
-                options.AddSecurityRequirement(requirement);
-                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Name = "Authorization",
-                    Description = "Enter the Bearer Authorization string as following: `Bearer Generated-JWT-Token`",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Name = "Bearer",
-                            In = ParameterLocation.Header,
-                            Reference = new OpenApiReference
-                            {
-                                Id = "Bearer",
-                                Type = ReferenceType.SecurityScheme,
-                            }
-                        },
-                        new List<string>()
+                        Description = "ApiKey must appear in header",
+                        Type = SecuritySchemeType.ApiKey,
+                        Name = "X-API-KEY",
+                        In = ParameterLocation.Header,
+                        Scheme = "ApiKey"
                     }
-                });
+                );
+                options.AddSecurityDefinition(
+                    "Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Name = "Authorization",
+                        Description =
+                            "Enter the Bearer Authorization string as following: `Bearer Generated-JWT-Token`",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer"
+                    }
+                );
+
+                options.AddSecurityDefinition(
+                    "OAuth2",
+                    new OpenApiSecurityScheme
+                    {
+                        Type = SecuritySchemeType.OAuth2,
+                        Scheme = "OAuth2",
+                        Flows = new OpenApiOAuthFlows()
+                        {
+                            ClientCredentials = new OpenApiOAuthFlow()
+                            {
+                                TokenUrl = new Uri("https://localhost:7048/connect/token"),
+                                Scopes =
+                                {
+                                    { Scopes.ImageRead, Scopes.ImageRead },
+                                    { Scopes.ImageWrite, Scopes.ImageWrite },
+                                    { Scopes.ReportRead, Scopes.ReportRead },
+                                    { Scopes.ReportWrite, Scopes.ReportWrite },
+                                    { Scopes.UserRead, Scopes.UserRead },
+                                    { Scopes.UserWrite, Scopes.UserWrite },
+                                },
+                            }
+                        }
+                    }
+                );
+
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
             });
 
             builder.Services.AddTransient<IUserAppService, UserAppService>();
@@ -100,24 +116,88 @@ namespace PcbManager.Main.WebHost
 
             const string solutionName = $"{nameof(PcbManager)}";
 
-            builder.Services.AddAutoMapper(x => x.AddMaps(
-                $"{solutionName}.{nameof(WebApi)}"
-            ));
+            builder.Services.AddAutoMapper(x => x.AddMaps($"{solutionName}.{nameof(WebApi)}"));
 
-            builder.Services.AddAuthentication("Bearer")
-                .AddJwtBearer("Bearer", options =>
-                {
-                    options.Authority = "https://localhost:7048";
-                    options.TokenValidationParameters = new TokenValidationParameters
+            builder.Services
+                .AddAuthentication("Bearer")
+                .AddJwtBearer(
+                    "Bearer",
+                    options =>
                     {
-                        ValidateAudience = false
-                    };
-                });
+                        options.Authority = "https://localhost:7048";
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateAudience = false
+                        };
+                    }
+                );
 
             builder.Services
                 .AddAuthentication("ApiKey")
-                .AddScheme<ApiKeyAuthenticationSchemeOptions, 
-                ApiKeyAuthenticationSchemeHandler>("ApiKey", opts => opts.ApiKey = "ApiKey");
+                .AddScheme<ApiKeyAuthenticationSchemeOptions, ApiKeyAuthenticationSchemeHandler>(
+                    "ApiKey",
+                    opts => opts.ApiKey = "ApiKey"
+                );
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy(
+                    Policies.ImageRead,
+                    policy =>
+                    {
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireClaim("scope", Scopes.ImageRead);
+                    }
+                );
+                options.AddPolicy(
+                    Policies.ImageWrite,
+                    policy =>
+                    {
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireClaim("scope", Scopes.ImageWrite);
+                    }
+                );
+                options.AddPolicy(
+                    Policies.ReportRead,
+                    policy =>
+                    {
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireClaim("scope", Scopes.ReportRead);
+                    }
+                );
+                options.AddPolicy(
+                    Policies.ReportWrite,
+                    policy =>
+                    {
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireClaim("scope", Scopes.ReportWrite);
+                    }
+                );
+                options.AddPolicy(
+                    Policies.UserRead,
+                    policy =>
+                    {
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireClaim("scope", Scopes.UserRead);
+                    }
+                );
+                options.AddPolicy(
+                    Policies.UserWrite,
+                    policy =>
+                    {
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireClaim("scope", Scopes.UserWrite);
+                    }
+                );
+                options.AddPolicy(
+                    Policies.AiWrite,
+                    policy =>
+                    {
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireClaim("scope", Scopes.AiWrite);
+                    }
+                );
+            });
 
             var app = builder.Build();
 

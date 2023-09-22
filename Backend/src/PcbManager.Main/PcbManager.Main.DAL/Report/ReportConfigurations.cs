@@ -19,10 +19,9 @@ public class ReportConfigurations : IEntityTypeConfiguration<Domain.ReportNS.Rep
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Id)
+        builder
+            .Property(x => x.Id)
             .ValueGeneratedNever()
-            .HasConversion(
-                id => id.Value,
-                value => ReportId.Create(value).Value);
+            .HasConversion(id => id.Value, value => ReportId.Create(value).Value);
     }
 }

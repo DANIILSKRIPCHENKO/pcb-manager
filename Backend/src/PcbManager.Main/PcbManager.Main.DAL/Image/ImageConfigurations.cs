@@ -17,25 +17,29 @@ namespace PcbManager.Main.DAL.Image
 
             builder.HasKey(x => x.Id);
 
-            builder.HasOne<Domain.ReportNS.Report>()
+            builder
+                .HasOne<Domain.ReportNS.Report>()
                 .WithOne()
                 .HasForeignKey<Domain.ReportNS.Report>(x => x.ImageId);
 
-            builder.Property(x => x.Id)
+            builder
+                .Property(x => x.Id)
                 .ValueGeneratedNever()
-                .HasConversion(
-                id => id.Value,
-                value => ImageId.Create(value).Value);
+                .HasConversion(id => id.Value, value => ImageId.Create(value).Value);
 
-            builder.Property(x => x.ImageName)
+            builder
+                .Property(x => x.ImageName)
                 .HasConversion(
-                imageName => imageName.Value,
-                value => ImageName.Create(value).Value);
+                    imageName => imageName.Value,
+                    value => ImageName.Create(value).Value
+                );
 
-            builder.Property(x => x.ImagePath)
+            builder
+                .Property(x => x.ImagePath)
                 .HasConversion(
-                imagePath => imagePath.Value,
-                value => ImagePath.Create(value).Value);
+                    imagePath => imagePath.Value,
+                    value => ImagePath.Create(value).Value
+                );
         }
     }
 }

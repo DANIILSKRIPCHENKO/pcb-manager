@@ -6,8 +6,6 @@ namespace PcbManager.Main.DAL.Report;
 
 public class ReportRepository : RepositoryBase<Domain.ReportNS.Report, ReportId>, IReportRepository
 {
-    public ReportRepository(PcbManagerDbContext context) : base(context)
-    {
-
-    }
+    public ReportRepository(PcbManagerDbContext context)
+        : base(context) { }
 }

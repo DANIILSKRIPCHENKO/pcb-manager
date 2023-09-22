@@ -6,8 +6,7 @@ namespace PcbManager.Main.DAL.User
 {
     public class UserRepository : RepositoryBase<Domain.UserNS.User, UserId>, IUserRepository
     {
-        public UserRepository(PcbManagerDbContext context) : base(context)
-        {
-        }
+        public UserRepository(PcbManagerDbContext context)
+            : base(context) { }
     }
 }

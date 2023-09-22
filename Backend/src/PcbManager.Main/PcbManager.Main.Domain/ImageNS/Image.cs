@@ -19,9 +19,7 @@ namespace PcbManager.Main.Domain.ImageNS
         }
 
 #pragma warning disable CS8618
-        private Image()
-        {
-        }
+        private Image() { }
 #pragma warning restore CS8618
 
         public ImageId Id { get; }
@@ -34,7 +32,10 @@ namespace PcbManager.Main.Domain.ImageNS
 
         public CreatedAt CreatedAt { get; }
 
-        public static IResult<Image, BaseError> Create(ImageName imageName, ImagePath imagePath, UserId userId) =>
-            Result.Success<Image, BaseError>(new Image(imageName, imagePath, userId));
+        public static IResult<Image, BaseError> Create(
+            ImageName imageName,
+            ImagePath imagePath,
+            UserId userId
+        ) => Result.Success<Image, BaseError>(new Image(imageName, imagePath, userId));
     }
 }

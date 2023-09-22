@@ -4,10 +4,10 @@ using PcbManager.Main.Domain.PcbDefectNS.ValueObjects;
 
 namespace PcbManager.Main.DAL.PcbDefect;
 
-public class PcbDefectRepository : RepositoryBase<Domain.PcbDefectNS.PcbDefect, PcbDefectId>, IPcbDefectRepository
+public class PcbDefectRepository
+    : RepositoryBase<Domain.PcbDefectNS.PcbDefect, PcbDefectId>,
+        IPcbDefectRepository
 {
-    public PcbDefectRepository(PcbManagerDbContext context) : base(context)
-    {
-
-    }
+    public PcbDefectRepository(PcbManagerDbContext context)
+        : base(context) { }
 }

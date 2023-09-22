@@ -6,9 +6,7 @@ namespace PcbManager.Main.DAL.Image
 {
     public class ImageRepository : RepositoryBase<Domain.ImageNS.Image, ImageId>, IImageRepository
     {
-        public ImageRepository(PcbManagerDbContext context) : base(context)
-        {
-
-        }
+        public ImageRepository(PcbManagerDbContext context)
+            : base(context) { }
     }
 }

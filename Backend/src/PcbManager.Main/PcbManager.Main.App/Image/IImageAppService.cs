@@ -6,7 +6,9 @@ namespace PcbManager.Main.App.Image
 {
     public interface IImageAppService
     {
-        public Task<Result<Domain.ImageNS.Image, BaseError>> UploadAsync(UploadImageRequest uploadImageRequest);
+        public Task<Result<Domain.ImageNS.Image, BaseError>> UploadAsync(
+            UploadImageRequest uploadImageRequest
+        );
 
         public Task<Result<Domain.ImageNS.Image, BaseError>> GetByIdAsync(ImageId imageId);
 

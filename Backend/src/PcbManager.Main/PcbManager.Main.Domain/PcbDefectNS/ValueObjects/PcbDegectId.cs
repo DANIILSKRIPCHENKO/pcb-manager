@@ -1,5 +1,4 @@
-﻿
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using PcbManager.Main.Domain.Errors.Abstractions;
 
 namespace PcbManager.Main.Domain.PcbDefectNS.ValueObjects;
@@ -18,5 +17,4 @@ public class PcbDefectId
 
     public static Result<PcbDefectId, BaseError> CreateUnique() =>
         Result.Success<PcbDefectId, BaseError>(new PcbDefectId(Guid.NewGuid()));
-
 }

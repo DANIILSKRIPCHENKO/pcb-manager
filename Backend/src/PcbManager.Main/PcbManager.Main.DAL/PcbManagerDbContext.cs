@@ -12,9 +12,8 @@ namespace PcbManager.Main.DAL
 
         public DbSet<Domain.PcbDefectNS.PcbDefect> PcbDefects { get; set; }
 
-        public PcbManagerDbContext(DbContextOptions<PcbManagerDbContext> options) : base(options)
-        {
-        }
+        public PcbManagerDbContext(DbContextOptions<PcbManagerDbContext> options)
+            : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
@@ -23,7 +22,9 @@ namespace PcbManager.Main.DAL
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=660003");
+            optionsBuilder.UseNpgsql(
+                "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=660003"
+            );
         }
     }
 }

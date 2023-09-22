@@ -10,7 +10,9 @@ public interface IReportAppService
 
     public Task<Result<Domain.ReportNS.Report, BaseError>> GetByIdAsync(ReportId id);
 
-    public Task<Result<Domain.ReportNS.Report, BaseError>> CreateAsync(CreateReportRequest createReportRequest);
+    public Task<Result<Domain.ReportNS.Report, BaseError>> CreateAsync(
+        CreateReportRequest createReportRequest
+    );
 
     public Task<Result<Domain.ReportNS.Report, BaseError>> DeleteAsync(ReportId id);
 }

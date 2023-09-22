@@ -1,5 +1,4 @@
-﻿
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using PcbManager.Main.Domain.Errors.Abstractions;
 
 namespace PcbManager.Main.Domain.ReportNS.ValueObjects;

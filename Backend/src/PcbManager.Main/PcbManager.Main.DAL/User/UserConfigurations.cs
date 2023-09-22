@@ -20,41 +20,43 @@ namespace PcbManager.Main.DAL.User
 
             builder.HasMany<Domain.ImageNS.Image>().WithOne().HasForeignKey(x => x.UserId);
 
-            builder.Property(x => x.Id)
+            builder
+                .Property(x => x.Id)
                 .ValueGeneratedNever()
-                .HasConversion(
-                id => id.Value,
-                value => UserId.Create(value));
+                .HasConversion(id => id.Value, value => UserId.Create(value));
 
-            builder.Property(x => x.Name)
-                .HasConversion(
-                name => name.Value,
-                value => UserName.Create(value).Value);
+            builder
+                .Property(x => x.Name)
+                .HasConversion(name => name.Value, value => UserName.Create(value).Value);
 
-            builder.Property(x => x.Surname)
-                .HasConversion(
-                surname => surname.Value,
-                value => UserSurname.Create(value).Value);
+            builder
+                .Property(x => x.Surname)
+                .HasConversion(surname => surname.Value, value => UserSurname.Create(value).Value);
 
-            builder.Property(x => x.Email)
-                .HasConversion(
-                email => email.Value,
-                value => UserEmail.Create(value).Value);
+            builder
+                .Property(x => x.Email)
+                .HasConversion(email => email.Value, value => UserEmail.Create(value).Value);
 
-            builder.Property(x => x.Password)
+            builder
+                .Property(x => x.Password)
                 .HasConversion(
-                password => password.Value,
-                value => UserPassword.Create(value).Value);
+                    password => password.Value,
+                    value => UserPassword.Create(value).Value
+                );
 
-            builder.Property(x => x.CreatedAt)
+            builder
+                .Property(x => x.CreatedAt)
                 .HasConversion(
                     createdAt => createdAt.Value,
-                    value => CreatedAt.Create(value).Value);
+                    value => CreatedAt.Create(value).Value
+                );
 
-            builder.Property(x => x.UpdatedAt)
+            builder
+                .Property(x => x.UpdatedAt)
                 .HasConversion(
                     updatedAt => updatedAt.Value,
-                    value => UpdatedAt.Create(value).Value);
+                    value => UpdatedAt.Create(value).Value
+                );
         }
     }
 }

@@ -34,7 +34,13 @@ namespace PcbManager.Main.Domain.UserNS
 
         public UpdatedAt UpdatedAt { get; private set; }
 
-        public static Result<User, ConflictError> Create(UserName name, UserSurname surname, UserEmail email, UserPassword password, IEnumerable<User> users)
+        public static Result<User, ConflictError> Create(
+            UserName name,
+            UserSurname surname,
+            UserEmail email,
+            UserPassword password,
+            IEnumerable<User> users
+        )
         {
             // починить сравнение
             if (users.Any(x => x.Email.Value == email.Value))
@@ -43,8 +49,13 @@ namespace PcbManager.Main.Domain.UserNS
             return Result.Success<User, ConflictError>(new User(name, surname, email, password));
         }
 
-        public Result<User, BaseError> Update(UserName name, UserSurname surname, UserEmail email,
-            UserPassword password, IEnumerable<User> users)
+        public Result<User, BaseError> Update(
+            UserName name,
+            UserSurname surname,
+            UserEmail email,
+            UserPassword password,
+            IEnumerable<User> users
+        )
         {
             if (users.Any(x => x.Email.Value == email.Value))
                 return Result.Failure<User, BaseError>(new ConflictError());
