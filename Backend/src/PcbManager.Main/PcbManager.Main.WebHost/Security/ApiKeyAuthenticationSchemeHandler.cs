@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using PcbManager.Main.WebApi.Security;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 
@@ -23,7 +24,16 @@ namespace PcbManager.Main.WebHost.Security
             {
                 return Task.FromResult(AuthenticateResult.Fail("Invalid X-API-KEY"));
             }
-            var claims = new[] { new Claim(ClaimTypes.Name, "VALID USER") };
+            var claims = new[] 
+            { 
+                new Claim("scope", Scopes.ImageRead),
+                new Claim("scope", Scopes.ImageWrite),
+                new Claim("scope", Scopes.ReportRead),
+                new Claim("scope", Scopes.ReportWrite),
+                new Claim("scope", Scopes.UserRead),
+                new Claim("scope", Scopes.UserWrite),
+                new Claim("scope", Scopes.AiWrite),
+            };
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);

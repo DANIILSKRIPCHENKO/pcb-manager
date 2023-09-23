@@ -14,6 +14,8 @@ using Microsoft.OpenApi.Models;
 using PcbManager.Main.WebHost.OpenApi;
 using PcbManager.Main.WebApi.Security;
 using static System.Net.WebRequestMethods;
+using PcbManager.Main.App;
+using System.Transactions;
 
 namespace PcbManager.Main.WebHost
 {
@@ -109,6 +111,8 @@ namespace PcbManager.Main.WebHost
             builder.Services.AddTransient<IImageRepository, ImageRepository>();
             builder.Services.AddTransient<IReportRepository, ReportRepository>();
             builder.Services.AddTransient<IPcbDefectRepository, PcbDefectRepository>();
+
+            builder.Services.AddTransient<ITransactionManager, DAL.TransactionManager>();
 
             builder.Services.AddTransient<IImageFileSystem, ImageFileSystem>();
 
