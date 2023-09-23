@@ -1,16 +1,19 @@
 ﻿using CSharpFunctionalExtensions;
 using PcbManager.Main.Domain.Errors.Abstractions;
 using PcbManager.Main.Domain.UserNS.ValueObjects;
+using System.Transactions;
 
 namespace PcbManager.Main.App.User
 {
     public class UserAppService : IUserAppService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ITransactionManager _transactionManager;
 
-        public UserAppService(IUserRepository userRepository)
+        public UserAppService(IUserRepository userRepository, ITransactionManager transactionManager)
         {
             _userRepository = userRepository;
+            _transactionManager = transactionManager;
         }
 
         public async Task<Result<List<Domain.UserNS.User>, BaseError>> GetAllAsync() =>

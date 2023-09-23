@@ -21,7 +21,7 @@ public abstract class RepositoryBase<TEntity, TId> : IRepositoryBase<TEntity, TI
     public async Task<Result<List<TEntity>, BaseError>> GetAllAsync()
     {
         var entities = await _context.Set<TEntity>().ToListAsync();
-        return Result.Success<List<TEntity>, BaseError>(entities);
+        return entities;
     }
 
     public async Task<Result<TEntity, BaseError>> GetByIdAsync(TId id)
@@ -29,11 +29,11 @@ public abstract class RepositoryBase<TEntity, TId> : IRepositoryBase<TEntity, TI
         try
         {
             var entity = await _context.Set<TEntity>().FirstAsync(x => x.Id == id);
-            return Result.Success<TEntity, BaseError>(entity);
+            return entity;
         }
         catch (InvalidOperationException ex)
         {
-            return Result.Failure<TEntity, BaseError>(new EntityNotFoundError());
+            return new EntityNotFoundError();
         }
     }
 
@@ -41,15 +41,16 @@ public abstract class RepositoryBase<TEntity, TId> : IRepositoryBase<TEntity, TI
     {
         try
         {
+            return new ConflictError();
             var entityEntry = await _context.Set<TEntity>().AddAsync(entity);
 
             await _context.SaveChangesAsync();
 
-            return Result.Success<TEntity, BaseError>(entityEntry.Entity);
+            return entityEntry.Entity;
         }
         catch (DbUpdateException ex)
         {
-            return Result.Failure<TEntity, BaseError>(new ConflictError());
+            return new ConflictError();
         }
     }
 
@@ -60,11 +61,11 @@ public abstract class RepositoryBase<TEntity, TId> : IRepositoryBase<TEntity, TI
             var removedEntity = _context.Remove(entity);
             await _context.SaveChangesAsync();
 
-            return Result.Success<TEntity, BaseError>(removedEntity.Entity);
+            return removedEntity.Entity;
         }
         catch (DbUpdateException ex)
         {
-            return Result.Failure<TEntity, BaseError>(new ConflictError());
+            return new ConflictError();
         }
     }
 
@@ -75,11 +76,11 @@ public abstract class RepositoryBase<TEntity, TId> : IRepositoryBase<TEntity, TI
             var updatedEntity = _context.Update(entity);
             await _context.SaveChangesAsync();
 
-            return Result.Success<TEntity, BaseError>(updatedEntity.Entity);
+            return updatedEntity.Entity;
         }
         catch (DbUpdateException ex)
         {
-            return Result.Failure<TEntity, BaseError>(new ConflictError());
+            return new ConflictError();
         }
     }
 }
