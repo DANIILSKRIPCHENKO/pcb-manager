@@ -9,6 +9,8 @@ namespace PcbManager.Main.App
 
         public Task<UnitResult<BaseError>> ExecuteInTransactionAsync<T>(Func<Task> action);
 
-        public Task<Result<T, BaseError>> ExecuteInTransactionAsync<T>(Func<Task<Result<T,BaseError>>> action);
+        public Task<Result<T, BaseError>> ExecuteInTransactionAsync<T>(
+            Func<Task<Result<T, BaseError>>> action
+        );
     }
 }

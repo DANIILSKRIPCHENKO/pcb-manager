@@ -1,5 +1,4 @@
 ﻿using CSharpFunctionalExtensions;
-using CSharpFunctionalExtensions.ValueTasks;
 using PcbManager.Main.App;
 using PcbManager.Main.Domain.Errors;
 using PcbManager.Main.Domain.Errors.Abstractions;
@@ -49,7 +48,9 @@ namespace PcbManager.Main.DAL
             }
         }
 
-        public async Task<Result<T, BaseError>> ExecuteInTransactionAsync<T>(Func<Task<Result<T, BaseError>>> action)
+        public async Task<Result<T, BaseError>> ExecuteInTransactionAsync<T>(
+            Func<Task<Result<T, BaseError>>> action
+        )
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -59,12 +60,12 @@ namespace PcbManager.Main.DAL
                 if (result.IsFailure)
                 {
                     await transaction.RollbackAsync();
-                    return new TransactionError();
+                    return result.Error;
                 }
                 await transaction.CommitAsync();
-                return result;
+                return result.Value;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 return new TransactionError();

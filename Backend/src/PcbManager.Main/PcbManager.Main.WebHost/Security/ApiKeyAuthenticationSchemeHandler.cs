@@ -24,8 +24,8 @@ namespace PcbManager.Main.WebHost.Security
             {
                 return Task.FromResult(AuthenticateResult.Fail("Invalid X-API-KEY"));
             }
-            var claims = new[] 
-            { 
+            var claims = new[]
+            {
                 new Claim("scope", Scopes.ImageRead),
                 new Claim("scope", Scopes.ImageWrite),
                 new Claim("scope", Scopes.ReportRead),

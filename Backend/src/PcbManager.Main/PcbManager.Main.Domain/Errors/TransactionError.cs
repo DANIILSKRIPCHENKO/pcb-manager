@@ -2,7 +2,5 @@
 
 namespace PcbManager.Main.Domain.Errors
 {
-    public class TransactionError : BaseError
-    {
-    }
+    public class TransactionError : BaseError { }
 }

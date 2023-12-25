@@ -2,6 +2,7 @@
 using PcbManager.Main.Domain.Errors.Abstractions;
 using PcbManager.Main.Domain.ImageNS.ValueObjects;
 using PcbManager.Main.Domain.UserNS.ValueObjects;
+using System.Transactions;
 
 namespace PcbManager.Main.App.Image
 {
@@ -9,11 +10,17 @@ namespace PcbManager.Main.App.Image
     {
         private readonly IImageRepository _imageRepository;
         private readonly IImageFileSystem _imageFileSystem;
+        private readonly ITransactionManager _transactionManager;
 
-        public ImageAppService(IImageRepository imageRepository, IImageFileSystem imageFileSystem)
+        public ImageAppService(
+            IImageRepository imageRepository,
+            IImageFileSystem imageFileSystem,
+            ITransactionManager transactionManager
+        )
         {
             _imageRepository = imageRepository;
             _imageFileSystem = imageFileSystem;
+            _transactionManager = transactionManager;
         }
 
         public async Task<Result<Domain.ImageNS.Image, BaseError>> UploadAsync(
@@ -40,14 +47,20 @@ namespace PcbManager.Main.App.Image
             if (image.IsFailure)
                 return image.Error;
 
-            //In transaction
-            var createdImageResult = await _imageRepository.CreateAsync(image.Value);
-            if (createdImageResult.IsFailure)
-                return createdImageResult.Error;
+            var createdImageResult = await _transactionManager.ExecuteInTransactionAsync(
+                async () =>
+                    await _imageRepository
+                        .CreateAsync(image.Value)
+                        .Tap(
+                            async () =>
+                                await _imageFileSystem.SaveAsync(
+                                    userId,
+                                    uploadImageRequest.ImageFile
+                                )
+                        )
+            );
 
-            await _imageFileSystem.SaveAsync(uploadImageRequest.ImageFile);
-
-            return Result.Success<Domain.ImageNS.Image, BaseError>(createdImageResult.Value);
+            return createdImageResult;
         }
 
         public async Task<Result<Domain.ImageNS.Image, BaseError>> GetByIdAsync(ImageId imageId) =>

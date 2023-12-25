@@ -12,9 +12,7 @@ namespace PcbManager.Main.Domain.ImageNS.ValueObjects
             Value = value;
         }
 
-        public static IResult<ImageName, ValidationError> Create(string value) =>
-            string.IsNullOrWhiteSpace(value)
-                ? Result.Failure<ImageName, ValidationError>(new ValidationError())
-                : Result.Success<ImageName, ValidationError>(new ImageName(value));
+        public static Result<ImageName, ValidationError> Create(string value) =>
+            string.IsNullOrWhiteSpace(value) ? new ValidationError() : new ImageName(value);
     }
 }

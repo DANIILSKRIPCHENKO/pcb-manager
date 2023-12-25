@@ -41,7 +41,6 @@ public abstract class RepositoryBase<TEntity, TId> : IRepositoryBase<TEntity, TI
     {
         try
         {
-            return new ConflictError();
             var entityEntry = await _context.Set<TEntity>().AddAsync(entity);
 
             await _context.SaveChangesAsync();
