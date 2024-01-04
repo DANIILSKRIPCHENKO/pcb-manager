@@ -37,16 +37,16 @@ public class ReportsController : ControllerBase
 
     [HttpPost]
     [Authorize(Policies.ReportWrite, AuthenticationSchemes = "Bearer,ApiKey")]
-    public async Task<ActionResult<object>> Create(
+    public async Task<ActionResult<ReportDto>> Create(
         [FromBody] CreateReportRequest createReportRequest
     ) =>
         await _reportAppService
             .CreateAsync(createReportRequest)
-            .Match(report => Ok(report), ErrorMapper.Map);
+            .Match(report => Ok(ReportDto.From(report)), ErrorMapper.Map);
 
     [HttpDelete("{id:guid}")]
     [Authorize(Policies.ReportWrite, AuthenticationSchemes = "Bearer,ApiKey")]
-    public async Task<ActionResult<UserDto>> Delete(Guid id) =>
+    public async Task<ActionResult<ReportDto>> Delete(Guid id) =>
         await _reportAppService
             .DeleteAsync(ReportId.Create(id).Value)
             .Match(report => Ok(ReportDto.From(report)), ErrorMapper.Map);
