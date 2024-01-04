@@ -25,7 +25,7 @@ namespace PcbManager.Main.DAL.Image
             builder
                 .Property(x => x.Id)
                 .ValueGeneratedNever()
-                .HasConversion(id => id.Value, value => ImageId.Create(value).Value);
+                .HasConversion(id => id.Value, value => ImageId.Create(value));
 
             builder
                 .Property(x => x.ImageName)

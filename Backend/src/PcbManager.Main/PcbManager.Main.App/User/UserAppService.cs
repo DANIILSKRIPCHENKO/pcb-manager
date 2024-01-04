@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
-using PcbManager.Main.App.Image;
+using PcbManager.Main.App.Abstractions;
 using PcbManager.Main.Domain.Errors.Abstractions;
+using PcbManager.Main.Domain.UserNS;
 using PcbManager.Main.Domain.UserNS.ValueObjects;
 
 namespace PcbManager.Main.App.User
@@ -9,17 +10,17 @@ namespace PcbManager.Main.App.User
     {
         private readonly IUserRepository _userRepository;
         private readonly ITransactionManager _transactionManager;
-        private readonly IImageFileSystem _imageFileSystem;
+        private readonly IFileSystem _fileSystem;
 
         public UserAppService(
             IUserRepository userRepository,
             ITransactionManager transactionManager,
-            IImageFileSystem imageFileSystem
+            IFileSystem fileSystem
         )
         {
             _userRepository = userRepository;
             _transactionManager = transactionManager;
-            _imageFileSystem = imageFileSystem;
+            _fileSystem = fileSystem;
         }
 
         public async Task<Result<List<Domain.UserNS.User>, BaseError>> GetAllAsync() =>
@@ -64,8 +65,15 @@ namespace PcbManager.Main.App.User
                 async () =>
                     await _userRepository
                         .CreateAsync(userResult.Value)
-                        .Tap(user => _imageFileSystem.CreateFolder(user.Id))
+                        .Tap(user => CreateUserFolders(user.Id))
             );
+        }
+
+        private void CreateUserFolders(UserId userId)
+        {
+            _fileSystem.CreateFolder(string.Empty, userId.Value.ToString());
+            _fileSystem.CreateFolder(userId.Value.ToString(), "Images");
+            _fileSystem.CreateFolder(userId.Value.ToString(), "Reports");
         }
 
         public async Task<Result<Domain.UserNS.User, BaseError>> GetByIdAsync(Guid id) =>
@@ -80,7 +88,13 @@ namespace PcbManager.Main.App.User
                             async () =>
                                 await _userRepository
                                     .DeleteAsync(user)
-                                    .Tap(user => _imageFileSystem.DeleteFolder(user.Id))
+                                    .Tap(
+                                        user =>
+                                            _fileSystem.DeleteFolder(
+                                                string.Empty,
+                                                user.Id.Value.ToString()
+                                            )
+                                    )
                         )
                 );
 

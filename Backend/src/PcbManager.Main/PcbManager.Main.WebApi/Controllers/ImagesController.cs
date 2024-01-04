@@ -32,7 +32,7 @@ public class ImagesController : ControllerBase
     [Authorize(Policies.ImageRead, AuthenticationSchemes = "Bearer,ApiKey")]
     public async Task<ActionResult<ImageDto>> GetById(Guid id) =>
         await _imageAppService
-            .GetByIdAsync(ImageId.Create(id).Value)
+            .GetByIdAsync(ImageId.Create(id))
             .Match(image => Ok(ImageDto.From(image)), ErrorMapper.Map);
 
     [HttpPost]
@@ -48,6 +48,6 @@ public class ImagesController : ControllerBase
     [Authorize(Policies.ImageWrite, AuthenticationSchemes = "Bearer,ApiKey")]
     public async Task<ActionResult<ImageDto>> Delete(Guid id) =>
         await _imageAppService
-            .DeleteAsync(ImageId.Create(id).Value)
+            .DeleteAsync(ImageId.Create(id))
             .Match(image => Ok(ImageDto.From(image)), ErrorMapper.Map);
 }

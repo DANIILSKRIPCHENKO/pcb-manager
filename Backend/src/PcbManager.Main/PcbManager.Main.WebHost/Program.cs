@@ -7,7 +7,7 @@ using PcbManager.Main.DAL.Image;
 using PcbManager.Main.DAL.PcbDefect;
 using PcbManager.Main.DAL.Report;
 using PcbManager.Main.DAL.User;
-using PcbManager.Main.FileSystem;
+using PcbManager.Main.FileSystemNS;
 using Microsoft.IdentityModel.Tokens;
 using PcbManager.Main.WebHost.Security;
 using Microsoft.OpenApi.Models;
@@ -16,6 +16,7 @@ using PcbManager.Main.WebApi.Security;
 using static System.Net.WebRequestMethods;
 using PcbManager.Main.App;
 using System.Transactions;
+using PcbManager.Main.App.Abstractions;
 
 namespace PcbManager.Main.WebHost
 {
@@ -114,7 +115,8 @@ namespace PcbManager.Main.WebHost
 
             builder.Services.AddTransient<ITransactionManager, DAL.TransactionManager>();
 
-            builder.Services.AddTransient<IImageFileSystem, ImageFileSystem>();
+            builder.Services.AddTransient<IFileSystem, FileSystem>();
+            builder.Services.AddTransient<IReportGeneratorAdapter, ReportGeneratorAdapter>();
 
             builder.Services.AddDbContext<PcbManagerDbContext>();
 

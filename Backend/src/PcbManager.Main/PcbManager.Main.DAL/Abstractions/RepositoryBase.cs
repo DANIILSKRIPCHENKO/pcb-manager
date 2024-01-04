@@ -26,60 +26,30 @@ public abstract class RepositoryBase<TEntity, TId> : IRepositoryBase<TEntity, TI
 
     public async Task<Result<TEntity, BaseError>> GetByIdAsync(TId id)
     {
-        try
-        {
-            var entity = await _context.Set<TEntity>().FirstAsync(x => x.Id == id);
-            return entity;
-        }
-        catch (InvalidOperationException ex)
-        {
+        var entity = await _context.Set<TEntity>().FirstOrDefaultAsync(x => x.Id == id);
+        if (entity == null)
             return new EntityNotFoundError();
-        }
+        return entity;
     }
 
     public async Task<Result<TEntity, BaseError>> CreateAsync(TEntity entity)
     {
-        try
-        {
-            var entityEntry = await _context.Set<TEntity>().AddAsync(entity);
-
-            await _context.SaveChangesAsync();
-
-            return entityEntry.Entity;
-        }
-        catch (DbUpdateException ex)
-        {
-            return new ConflictError();
-        }
+        var entityEntry = await _context.Set<TEntity>().AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return entityEntry.Entity;
     }
 
     public async Task<Result<TEntity, BaseError>> DeleteAsync(TEntity entity)
     {
-        try
-        {
-            var removedEntity = _context.Remove(entity);
-            await _context.SaveChangesAsync();
-
-            return removedEntity.Entity;
-        }
-        catch (DbUpdateException ex)
-        {
-            return new ConflictError();
-        }
+        var removedEntity = _context.Remove(entity);
+        await _context.SaveChangesAsync();
+        return removedEntity.Entity;
     }
 
     public async Task<Result<TEntity, BaseError>> UpdateAsync(TEntity entity)
     {
-        try
-        {
-            var updatedEntity = _context.Update(entity);
-            await _context.SaveChangesAsync();
-
-            return updatedEntity.Entity;
-        }
-        catch (DbUpdateException ex)
-        {
-            return new ConflictError();
-        }
+        var updatedEntity = _context.Update(entity);
+        await _context.SaveChangesAsync();
+        return updatedEntity.Entity;
     }
 }

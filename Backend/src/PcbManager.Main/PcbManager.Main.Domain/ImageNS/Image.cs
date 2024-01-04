@@ -11,7 +11,7 @@ namespace PcbManager.Main.Domain.ImageNS
     {
         private Image(ImageName imageName, ImagePath imagePath, UserId userId)
         {
-            Id = ImageId.CreateUnique().Value;
+            Id = ImageId.CreateUnique();
             ImageName = imageName;
             ImagePath = imagePath;
             UserId = userId;

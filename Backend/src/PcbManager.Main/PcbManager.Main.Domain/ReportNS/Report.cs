@@ -10,8 +10,6 @@ namespace PcbManager.Main.Domain.ReportNS;
 
 public class Report : IIdEntity<ReportId>, ICreatedAtEntity
 {
-    private readonly List<PcbDefect> _pcbDefect = new();
-
     private Report(ImageId imageId)
     {
         Id = ReportId.CreateUnique().Value;

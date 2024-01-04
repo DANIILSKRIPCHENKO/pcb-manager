@@ -1,6 +1,8 @@
 ﻿using CSharpFunctionalExtensions;
+using PcbManager.Main.App.Abstractions;
 using PcbManager.Main.Domain.Errors.Abstractions;
 using PcbManager.Main.Domain.ImageNS.ValueObjects;
+using PcbManager.Main.Domain.UserNS;
 using PcbManager.Main.Domain.UserNS.ValueObjects;
 using System.Transactions;
 
@@ -9,17 +11,17 @@ namespace PcbManager.Main.App.Image
     public class ImageAppService : IImageAppService
     {
         private readonly IImageRepository _imageRepository;
-        private readonly IImageFileSystem _imageFileSystem;
+        private readonly IFileSystem _fileSystem;
         private readonly ITransactionManager _transactionManager;
 
         public ImageAppService(
             IImageRepository imageRepository,
-            IImageFileSystem imageFileSystem,
+            IFileSystem fileSystem,
             ITransactionManager transactionManager
         )
         {
             _imageRepository = imageRepository;
-            _imageFileSystem = imageFileSystem;
+            _fileSystem = fileSystem;
             _transactionManager = transactionManager;
         }
 
@@ -52,10 +54,11 @@ namespace PcbManager.Main.App.Image
                     await _imageRepository
                         .CreateAsync(image.Value)
                         .Tap(
-                            async () =>
-                                await _imageFileSystem.SaveAsync(
-                                    userId,
-                                    uploadImageRequest.ImageFile
+                            image =>
+                                _fileSystem.SaveFileAsync(
+                                    $"{userId.Value}/Images",
+                                    $"{image.Id.Value}.jpg",
+                                    uploadImageRequest.ImageFile.OpenReadStream()
                                 )
                         )
             );
@@ -70,6 +73,18 @@ namespace PcbManager.Main.App.Image
             await _imageRepository.GetAllAsync();
 
         public async Task<Result<Domain.ImageNS.Image, BaseError>> DeleteAsync(ImageId imageId) =>
-            await _imageRepository.GetByIdAsync(imageId).Bind(x => _imageRepository.DeleteAsync(x));
+            await _transactionManager.ExecuteInTransactionAsync(
+                async () =>
+                    await _imageRepository
+                        .GetByIdAsync(imageId)
+                        .Bind(image => _imageRepository.DeleteAsync(image))
+                        .Tap(
+                            image =>
+                                _fileSystem.DeleteFile(
+                                    $"{image.UserId.Value}/Images",
+                                    $"{image.Id.Value}.jpg"
+                                )
+                        )
+            );
     }
 }

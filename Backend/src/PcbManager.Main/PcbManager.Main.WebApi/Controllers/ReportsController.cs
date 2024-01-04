@@ -37,12 +37,12 @@ public class ReportsController : ControllerBase
 
     [HttpPost]
     [Authorize(Policies.ReportWrite, AuthenticationSchemes = "Bearer,ApiKey")]
-    public async Task<ActionResult<UserDto>> Create(
+    public async Task<ActionResult<object>> Create(
         [FromBody] CreateReportRequest createReportRequest
     ) =>
         await _reportAppService
             .CreateAsync(createReportRequest)
-            .Match(report => Ok(ReportDto.From(report)), ErrorMapper.Map);
+            .Match(report => Ok(report), ErrorMapper.Map);
 
     [HttpDelete("{id:guid}")]
     [Authorize(Policies.ReportWrite, AuthenticationSchemes = "Bearer,ApiKey")]
