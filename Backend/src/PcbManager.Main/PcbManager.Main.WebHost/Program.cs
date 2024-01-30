@@ -17,6 +17,7 @@ using static System.Net.WebRequestMethods;
 using PcbManager.Main.App;
 using System.Transactions;
 using PcbManager.Main.App.Abstractions;
+using PcbManager.Main.DAL.Configuration;
 
 namespace PcbManager.Main.WebHost
 {
@@ -42,6 +43,8 @@ namespace PcbManager.Main.WebHost
             {
                 options.LowercaseUrls = true;
             });
+
+            builder.Services.Configure<DalConfiguration>(builder.Configuration.GetSection("Dal"));
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
